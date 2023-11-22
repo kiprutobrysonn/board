@@ -1,0 +1,52 @@
+/* Basic.css */
+.modern-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.submit-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+/* Basic.css */
+/* ... (previous styles) */
+
+.register-button {
+  position: relative;
+
+  text-align: right;
+  background-color: #3498db;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+}
