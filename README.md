@@ -1,1 +1,5 @@
-simple-trello is being sponsored by the following tool
+In the terminal
+run npm install
+then
+npm start
+hAppy hacking
