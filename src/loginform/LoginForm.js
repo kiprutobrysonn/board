@@ -27,7 +27,6 @@ export default class LoginForm extends React.Component {
 
   onSubmitLogin = (e) => {
     e.preventDefault();
-    this.state.onLogin(e, this.state.login, this.state.password);
   };
 
   onLogin = (e, username, password) => {
