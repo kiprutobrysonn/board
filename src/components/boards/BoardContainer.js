@@ -5,13 +5,20 @@ import styled from "styled-components";
 import CreateBoardContainer from "./boardCreation/CreateBoardContainer";
 import ShowAllBoards from "./ShowAllBoards";
 import { fadeIn } from "~Utils/Animations";
-import AddUser from "./AddUser";
 
 const Wrapper = styled.div`
   display: flex;
   padding: 60px 35px;
   flex-wrap: wrap;
   animation: ${fadeIn} 300ms linear;
+`;
+const CloseButton = styled.img`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
 `;
 class BoardContainer extends Component {
   renderAllBoards = () => {
@@ -24,8 +31,16 @@ class BoardContainer extends Component {
   render() {
     return (
       <Wrapper>
-        <AddUser></AddUser>
-        <CreateBoardContainer />
+        <CreateBoardContainer>
+          <CloseButton
+            src="../../Assets/closeIcon.svg"
+            alt="Close"
+            onClick={() => {
+              // Handle the close button click action here
+              // For example, navigate to another page or close the modal
+            }}
+          />
+        </CreateBoardContainer>
 
         {this.renderAllBoards()}
       </Wrapper>
