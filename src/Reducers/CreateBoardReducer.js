@@ -4,8 +4,8 @@ import {
   CREATE_NEW_BOARD,
   CANCEL_NEW_BOARD,
   SUBMIT_NEW_BOARD,
-  DELETE_BOARD,
 } from "~Actions/ActionTypes";
+import { DELETE_BOARD_COLLECTION } from "../Actions/ActionTypes";
 
 const initialState = {
   isBoardOpen: false,
@@ -51,13 +51,6 @@ export default function (state = initialState, action) {
         title: action.payload,
         id: uniqueId(""),
       };
-    case DELETE_BOARD:
-      if (state.id === action.payload.boardId) {
-        return {
-          ...initialState, // Reset to initial state
-        };
-      }
-      return state;
 
     default:
       return state;

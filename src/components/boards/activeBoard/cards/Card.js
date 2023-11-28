@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { DragSource } from "react-dnd";
 import { ItemTypes } from "~Utils/Constants";
 import archiveCard from "~Actions/ArchiveCard";
+import { deleteCard } from "~Actions/DeletCard";
 
 const CardWrapper = styled.div`
   margin: 10px 0;
@@ -14,6 +15,7 @@ const CardWrapper = styled.div`
   cursor: grab;
   display: flex;
   justify-content: space-around;
+  position: relative;
 `;
 
 const UserIcon = styled.div`
@@ -43,6 +45,13 @@ const ArchiveTask = styled.div`
   font-size: 16px;
 `;
 
+const CloseIcon = styled.div`
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  cursor: pointer;
+`;
+
 const cardSource = {
   beginDrag({ title, cardId, listId }) {
     return {
@@ -67,18 +76,18 @@ class Card extends Component {
     connectDragSource: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
     archiveCard: PropTypes.func.isRequired,
+    deleteCard: PropTypes.func.isRequired,
   };
 
   state = {
     isEditing: false,
     editedTitle: this.props.title,
+    isCardVisible: true,
   };
 
   handleTitleClick = () => {
-    this.setState({ isEditing: true });
+    this.setState({ isEditing: true, editedTitle: this.props.title });
   };
-
-  toggleTick;
 
   handleTitleChange = (event) => {
     this.setState({ editedTitle: event.target.value });
@@ -94,50 +103,54 @@ class Card extends Component {
     // Exit the editing mode
     this.setState({ isEditing: false });
   };
-  togglePost = (cardId, listId) => {
-    this.props.archiveCard(cardId, listId);
+
+  handleHideCard = () => {
+    this.setState({ isCardVisible: false });
+  };
+  handleDeleteCard = () => {
+    const { cardId, listId, deleteCard } = this.props;
+    // Call the deleteCard action to delete the card
+    deleteCard(cardId, listId);
   };
 
   render() {
     const { isDragging, connectDragSource, cardId, listId, title, isArchived } =
       this.props;
-    const { isEditing, editedTitle } = this.state;
+    const { isEditing, editedTitle, isCardVisible } = this.state;
 
     const cardStyles = {
-      opacity: isDragging || isArchived ? 0.35 : 1,
+      opacity: isDragging || isArchived || !isCardVisible ? 0.35 : 1,
       boxShadow: "0 6px 6px rgba(0,0,0,0.16), 0 6px 6px rgba(0,0,0,0.23)",
       textDecoration: isArchived ? "line-through" : "none",
       backgroundColor: isArchived ? "#DECAFF" : "#caffde",
+      display: isCardVisible ? "flex" : "none",
     };
 
     return (
-      <div style={{ position: "relative" }}>
+      <CardWrapper style={cardStyles}>
+        <CloseIcon onClick={this.handleDeleteCard}>✖</CloseIcon>
         <UserIcon>👤</UserIcon>
         {connectDragSource(
           <div>
-            <CardWrapper style={cardStyles}>
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={editedTitle}
-                  onChange={this.handleTitleChange}
-                  onBlur={this.handleTitleBlur}
-                  autoFocus
-                />
-              ) : (
-                <CardTitle onClick={this.handleTitleClick}>{title}</CardTitle>
-              )}
-              <ArchiveTask
-                onClick={() => this.props.archiveCard(cardId, listId)}
-              >
-                ✓
-              </ArchiveTask>
-            </CardWrapper>
+            {isEditing ? (
+              <input
+                type="text"
+                value={editedTitle}
+                onChange={this.handleTitleChange}
+                onBlur={this.handleTitleBlur}
+                autoFocus
+              />
+            ) : (
+              <CardTitle onClick={this.handleTitleClick}>{title}</CardTitle>
+            )}
+            <ArchiveTask onClick={() => this.props.archiveCard(cardId, listId)}>
+              ✓
+            </ArchiveTask>
           </div>
         )}
-      </div>
+      </CardWrapper>
     );
   }
 }
 
-export default connect(null, { archiveCard })(Card);
+export default connect(null, { archiveCard, deleteCard })(Card);

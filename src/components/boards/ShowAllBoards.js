@@ -1,7 +1,9 @@
-import React from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { fadeIn } from "~Utils/Animations";
+
+import { connect } from "react-redux";
 const Title = styled.h2`
   color: black;
   word-break: break-all;
@@ -33,13 +35,32 @@ const BoardWrapper = styled.div`
     transform: scale(1.1);
   }
 `;
+const CloseBoardIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  transition: all 200ms ease-in-out;
 
-const ShowAllBoards = ({ title, id }) => (
-  <Link to={`/b/${id}`}>
-    <BoardWrapper>
-      <Title>{title}</Title>
-    </BoardWrapper>
-  </Link>
-);
+  &:hover {
+    transition: all 200ms ease-in-out;
+    transform: scale(1.25) rotate(4.5deg);
+  }
+`;
 
-export default ShowAllBoards;
+const ShowAllBoards = ({ title, id }) => {
+  const handleClose = () => {};
+
+  return (
+    <Link to={`b/${id}`}>
+      <CloseBoardIcon
+        src={require("../../Assets/closeIcon.svg")}
+        onClick={handleClose}
+      />
+      <BoardWrapper>
+        <Title>{title}</Title>
+      </BoardWrapper>
+    </Link>
+  );
+};
+
+export default connect(null)(ShowAllBoards);

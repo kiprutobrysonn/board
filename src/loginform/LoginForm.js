@@ -150,6 +150,7 @@ export default class LoginForm extends React.Component {
                     type="submit"
                     className="btn btn-primary btn-block mb-4"
                   >
+                    
                     Sign in
                   </button>
                 </form>

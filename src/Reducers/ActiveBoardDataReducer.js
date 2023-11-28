@@ -6,44 +6,21 @@ import {
   HANDLE_DROP,
   ARCHIVE_POST,
   SELECT_ACTIVE_BOARD,
+  DELETE_CARD,
 } from "~Actions/ActionTypes";
 import uniqueId from "lodash/uniqueId";
-
-const createDefaultLists = (boardId) => {
-  const todoListId = uniqueId("list_");
-  const inProgressListId = uniqueId("list_");
-  const completedListId = uniqueId("list_");
-
-  return {
-    [todoListId]: { name: "TODO", id: todoListId, cards: [], boardId },
-    [inProgressListId]: {
-      name: "INPROGRESS",
-      id: inProgressListId,
-      cards: [],
-      boardId,
-    },
-    [completedListId]: {
-      name: "COMPLETED",
-      id: completedListId,
-      cards: [],
-      boardId,
-    },
-  };
-};
+import { DELETE_LIST_ITEM } from "../Actions/ActionTypes";
 
 const ListReducer = (state = {}, action) => {
   const listId = uniqueId("list_");
-  var defaultLists;
 
   switch (action.type) {
     case SELECT_ACTIVE_BOARD:
       return action.payload.data || [];
 
     case CREATE_NEW_BOARD:
-      defaultLists = createDefaultLists(action.payload.boardId);
       return {
         ...state,
-        ...defaultLists,
       };
 
     case SUBMIT_LIST:
@@ -102,6 +79,36 @@ const ListReducer = (state = {}, action) => {
         ...state,
         [listId]: currentList,
       };
+    }
+
+    case DELETE_CARD: {
+      const { cardId, listId } = action.payload;
+
+      // Find the index of the card to remove
+      const removeCardIndex = state[listId].cards.findIndex(
+        (card) => card.cardId === cardId
+      );
+
+      // Create a new state object without mutating the original state
+      const newState = {
+        ...state,
+        [listId]: {
+          ...state[listId],
+          cards: [
+            ...state[listId].cards.slice(0, removeCardIndex),
+            ...state[listId].cards.slice(removeCardIndex + 1),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case DELETE_LIST_ITEM: {
+      const { listId } = action.payload;
+      const newState = { ...state };
+      delete newState[listId]; // Remove the list with the specified listId
+
+      return newState;
     }
 
     default:
