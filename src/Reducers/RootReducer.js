@@ -4,6 +4,7 @@ import CreateBoardReducer from "./CreateBoardReducer";
 import BoardsCollectionReducer from "./BoardsCollectionReducer";
 import ActiveBoardReducer from "./ActiveBoardReducer";
 import ActiveBoardDataReducer from "./ActiveBoardDataReducer";
+import userDataReducer from "./UpdateUserDetails";
 
 const RootReducer = combineReducers({
   form: formReducer,
@@ -11,6 +12,7 @@ const RootReducer = combineReducers({
   boardsCollection: BoardsCollectionReducer,
   activeBoard: ActiveBoardReducer,
   activeBoardData: ActiveBoardDataReducer,
+  user: userDataReducer,
 });
 
 export default RootReducer;

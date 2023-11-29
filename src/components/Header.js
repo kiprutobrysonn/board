@@ -70,7 +70,7 @@ const InviteButton = styled.button`
   cursor: pointer;
 `;
 
-const Header = ({ deleteBoardCollection }) => (
+const Header = ({ user, deleteBoardCollection }) => (
   <HeaderWrapper>
     <Link to="/mainboard">
       <Image />
@@ -79,7 +79,7 @@ const Header = ({ deleteBoardCollection }) => (
     <Search type="text" placeholder="Search..." />
     <UserProfile>
       <UserIcon>👤</UserIcon>
-      <UserName>User Name</UserName>
+      <UserName>USER</UserName>
     </UserProfile>
     <InviteButton onClick={() => deleteBoardCollection()}>
       DELETE ALL BOARDS{" "}
@@ -87,7 +87,9 @@ const Header = ({ deleteBoardCollection }) => (
   </HeaderWrapper>
 );
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ deleteBoardCollection }, dispatch);

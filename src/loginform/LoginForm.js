@@ -2,16 +2,17 @@ import * as React from "react";
 import classNames from "classnames";
 import { useHistory } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { connect, useDispatch } from "react-redux";
+import { updateUserData } from "../Actions/UpdateUserData";
 
-import { request, setAuthHeader } from "../Helper/axios_helper";
-
-export default class LoginForm extends React.Component {
+class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       active: "Login",
       firstName: "",
       lastName: "",
+      userName: "UserData",
       login: "",
       password: "",
       onLogin: props.onLogin,
@@ -19,59 +20,91 @@ export default class LoginForm extends React.Component {
       loading: false,
     };
   }
+
   onChangeHandler = (event) => {
     let name = event.target.name;
     let value = event.target.value;
     this.setState({ [name]: value });
   };
 
-  onSubmitLogin = (e) => {
+  onSubmitLogin = async (e) => {
+    // const dispatch = useDispatch();
     e.preventDefault();
-  };
-
-  onLogin = (e, username, password) => {
-    e.preventDefault();
+    // Make API request for login
     try {
-      const response = request("POST", "/auth/login", {
-        login: username,
-        password: password,
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          username: this.state.userName,
+          password: this.state.password,
+        }),
       });
-      setAuthHeader(response.data.token);
-      const history = useHistory();
-      history.push("/mainboard");
+
+      if (response.ok) {
+        const data = await response.json();
+        const user = data.user.username;
+
+        console.log(user);
+        updateUserData({
+          user,
+        });
+
+        // Assuming the server returns a JWT token
+        const jwtToken = data.token;
+        // Store the token (e.g., in localStorage or state)
+        localStorage.setItem("jwtToken", jwtToken);
+        // You may also want to redirect the user or perform other actions
+        console.log("Login successful");
+        this.props.history.push("/mainboard");
+      } else {
+        // Handle login failure
+        console.error("Login failed");
+      }
     } catch (error) {
-      console.log("Login failed:", error.message);
-      setAuthHeader(null);
-    } finally {
-      this.setState({ loading: false });
+      console.error("Error during login:", error.message);
     }
   };
 
+  onLogin = (e, username, password) => {};
+
   onRegister = (event, firstName, lastName, username, password) => {
     event.preventDefault();
-    request("POST", "/auth/register", {
-      firstName: firstName,
-      lastName: lastName,
-      login: username,
-      password: password,
-    })
-      .then((response) => {
-        console.log("Method called");
-        setAuthHeader(response.data.token);
-      })
-      .catch((error) => {
-        setAuthHeader(null);
-      });
   };
 
-  onSubmitRegister = (e) => {
-    this.state.onRegister(
-      e,
-      this.state.firstName,
-      this.state.lastName,
-      this.state.login,
-      this.state.password
-    );
+  onSubmitRegister = async (event) => {
+    event.preventDefault();
+    // Make API request for registration
+    try {
+      const response = await fetch("http://localhost:8000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          userName: this.state.userName,
+          password: this.state.password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Assuming the server returns some registration data
+        // You can handle the registration response as needed
+        console.log("Registration successful:", data);
+      } else {
+        // Handle registration failure
+        console.error("Registration failed");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error.message);
+    }
   };
 
   render() {
@@ -122,11 +155,12 @@ export default class LoginForm extends React.Component {
                 <form onSubmit={this.onSubmitLogin}>
                   <div className="form-outline mb-4">
                     <input
-                      type="login"
-                      id="loginName"
-                      name="login"
+                      type="text"
+                      id="userName"
+                      name="userName"
                       className="form-control"
                       onChange={this.onChangeHandler}
+                      required
                     />
                     <label className="form-label" htmlFor="loginName">
                       Username
@@ -136,7 +170,8 @@ export default class LoginForm extends React.Component {
                   <div className="form-outline mb-4">
                     <input
                       type="password"
-                      id="loginPassword"
+                      required
+                      id="password"
                       name="password"
                       className="form-control"
                       onChange={this.onChangeHandler}
@@ -150,7 +185,6 @@ export default class LoginForm extends React.Component {
                     type="submit"
                     className="btn btn-primary btn-block mb-4"
                   >
-                    
                     Sign in
                   </button>
                 </form>
@@ -171,6 +205,7 @@ export default class LoginForm extends React.Component {
                       name="firstName"
                       className="form-control"
                       onChange={this.onChangeHandler}
+                      required
                     />
                     <label className="form-label" htmlFor="firstName">
                       First name
@@ -184,6 +219,7 @@ export default class LoginForm extends React.Component {
                       name="lastName"
                       className="form-control"
                       onChange={this.onChangeHandler}
+                      required
                     />
                     <label className="form-label" htmlFor="lastName">
                       Last name
@@ -193,10 +229,11 @@ export default class LoginForm extends React.Component {
                   <div className="form-outline mb-4">
                     <input
                       type="text"
-                      id="login"
-                      name="login"
+                      id="userName"
+                      name="userName"
                       className="form-control"
                       onChange={this.onChangeHandler}
+                      required
                     />
                     <label className="form-label" htmlFor="login">
                       Username
@@ -205,9 +242,10 @@ export default class LoginForm extends React.Component {
 
                   <div className="form-outline mb-4">
                     <input
-                      type="password"
-                      id="registerPassword"
+                      type="text"
+                      id="password"
                       name="password"
+                      required
                       className="form-control"
                       onChange={this.onChangeHandler}
                     />
@@ -231,3 +269,10 @@ export default class LoginForm extends React.Component {
     );
   }
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateUserData: (userData) => dispatch(updateUserData(userData)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(LoginForm);

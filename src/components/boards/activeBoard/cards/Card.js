@@ -6,6 +6,7 @@ import { DragSource } from "react-dnd";
 import { ItemTypes } from "~Utils/Constants";
 import archiveCard from "~Actions/ArchiveCard";
 import { deleteCard } from "~Actions/DeletCard";
+import { editPostTitle } from "../../../../Actions/ArchiveCard";
 
 const CardWrapper = styled.div`
   margin: 10px 0;
@@ -90,15 +91,19 @@ class Card extends Component {
   };
 
   handleTitleChange = (event) => {
+    const { cardId, listId, editPostTitle } = this.props;
+    const { editedTitle } = this.state;
+
+    // Update the local state
     this.setState({ editedTitle: event.target.value });
+
+    // Dispatch the editPostTitle action to update the title in the Redux store
+    editPostTitle(cardId, listId, event.target.value);
   };
 
   handleTitleBlur = () => {
     const { cardId, listId, archiveCard } = this.props;
     const { editedTitle } = this.state;
-
-    // Save the edited title
-    archiveCard(cardId, listId, editedTitle);
 
     // Exit the editing mode
     this.setState({ isEditing: false });
@@ -132,17 +137,19 @@ class Card extends Component {
         <UserIcon>👤</UserIcon>
         {connectDragSource(
           <div>
-            {isEditing ? (
-              <input
-                type="text"
-                value={editedTitle}
-                onChange={this.handleTitleChange}
-                onBlur={this.handleTitleBlur}
-                autoFocus
-              />
-            ) : (
-              <CardTitle onClick={this.handleTitleClick}>{title}</CardTitle>
-            )}
+            <CardTitle onClick={this.handleTitleClick}>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={editedTitle}
+                  onChange={this.handleTitleChange}
+                  onBlur={this.handleTitleBlur}
+                  autoFocus
+                />
+              ) : (
+                title
+              )}
+            </CardTitle>
             <ArchiveTask onClick={() => this.props.archiveCard(cardId, listId)}>
               ✓
             </ArchiveTask>
@@ -153,4 +160,15 @@ class Card extends Component {
   }
 }
 
-export default connect(null, { archiveCard, deleteCard })(Card);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    editCardTitle: (cardId, listId, newTitle) =>
+      dispatch(editPostTitle(cardId, listId, newTitle)),
+  };
+};
+
+export default connect(mapDispatchToProps, {
+  archiveCard,
+  editPostTitle,
+  deleteCard,
+})(Card);

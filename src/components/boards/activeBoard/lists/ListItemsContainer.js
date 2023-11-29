@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import mapValues from "lodash/mapValues";
 import ListItem from "./ListItem";
+import { deleteListItem } from "../../../../Actions/DeleteListItem";
 
 const ListItemsWrapper = styled.div`
   display: flex;
@@ -10,7 +11,7 @@ const ListItemsWrapper = styled.div`
 
 class ListItemsContainer extends Component {
   renderListItems = () => {
-    const { activeBoardData } = this.props;
+    const { activeBoardData, deleteListItem } = this.props;
 
     const mappedList = mapValues(
       activeBoardData.listItems,
@@ -19,7 +20,14 @@ class ListItemsContainer extends Component {
     const mappedKeys = Object.keys(mappedList);
 
     return mappedKeys.map((id, i) => {
-      return <ListItem id={id} key={i} name={mappedList[id]} />;
+      return (
+        <ListItem
+          id={id}
+          key={i}
+          name={mappedList[id]}
+          deleteListItem={deleteListItem}
+        />
+      );
     });
   };
 
@@ -36,4 +44,4 @@ function mapStateToProps({ activeBoardData }) {
   return { activeBoardData };
 }
 
-export default connect(mapStateToProps)(ListItemsContainer);
+export default connect(mapStateToProps, { deleteListItem })(ListItemsContainer);

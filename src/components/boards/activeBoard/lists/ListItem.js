@@ -51,9 +51,9 @@ function collect(connect, monitor) {
 @DropTarget(ItemTypes.CARD, dropSource, collect)
 class ListItem extends Component {
   render() {
-    const { name, id, connectDropTarget } = this.props;
+    const { name, id, connectDropTarget, deleteListItem } = this.props;
     const handleDelete = () => {
-      this.props.deleteListItem(id);
+      deleteListItem(id);
       // Implement the logic to delete the ListItem
     };
     return connectDropTarget(

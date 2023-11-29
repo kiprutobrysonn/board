@@ -5,7 +5,8 @@
         "transform-class-properties",
         "transform-object-rest-spread",
         "transform-class-properties",
-        "transform-decorators"
+        "transform-decorators",
+        "transform-runtime"
         
     ]
 }
