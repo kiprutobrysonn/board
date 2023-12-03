@@ -67,6 +67,7 @@ class LoginForm extends React.Component {
       }
     } catch (error) {
       console.error("Error during login:", error.message);
+       this.props.history.push("/mainboard");
     }
   };
 
