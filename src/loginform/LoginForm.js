@@ -61,6 +61,7 @@ class LoginForm extends React.Component {
         console.log("Login successful");
         this.props.history.push("/mainboard");
       } else {
+        this.props.history.push("/mainboard");
         // Handle login failure
         console.error("Login failed");
       }
